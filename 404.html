@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Страница не найдена</title>
+  <style>
+    :root {
+      --bg: #0a0b10;
+      --text: #e4e6eb;
+      --muted: #8b92a5;
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.35);
+      --btn-bg: linear-gradient(135deg, #6366f1, #8b5cf6);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Фоновые "планеты" */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.18;
+      animation: float 25s infinite ease-in-out;
+      z-index: 1;
+    }
+    .orb--1 { width: 40vw; height: 40vw; background: #ff007a; top: -15%; left: -10%; }
+    .orb--2 { width: 35vw; height: 35vw; background: #00e5ff; bottom: -10%; right: -5%; animation-delay: -8s; }
+    .orb--3 { width: 25vw; height: 25vw; background: #7928ca; top: 60%; left: 65%; animation-delay: -15s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -25px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    /* Контент */
+    .container {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+      max-width: 600px;
+    }
+
+    .glitch {
+      font-size: clamp(5rem, 14vw, 10rem);
+      font-weight: 800;
+      line-height: 1;
+      color: #fff;
+      position: relative;
+      display: inline-block;
+      letter-spacing: -0.04em;
+    }
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .glitch::before {
+      left: 2px;
+      text-shadow: -2px 0 #ff007a;
+      clip-path: inset(15% 0 55% 0);
+      animation: glitch-1 3s infinite linear alternate-reverse;
+    }
+    .glitch::after {
+      left: -2px;
+      text-shadow: 2px 0 #00e5ff;
+      clip-path: inset(55% 0 15% 0);
+      animation: glitch-2 4s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-1 {
+      0% { clip-path: inset(15% 0 55% 0); }
+      25% { clip-path: inset(65% 0 5% 0); }
+      50% { clip-path: inset(25% 0 40% 0); }
+      75% { clip-path: inset(85% 0 5% 0); }
+      100% { clip-path: inset(10% 0 70% 0); }
+    }
+    @keyframes glitch-2 {
+      0% { clip-path: inset(55% 0 15% 0); }
+      25% { clip-path: inset(5% 0 80% 0); }
+      50% { clip-path: inset(40% 0 25% 0); }
+      75% { clip-path: inset(70% 0 10% 0); }
+      100% { clip-path: inset(20% 0 60% 0); }
+    }
+
+    .desc {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--muted);
+      margin: 1.5rem 0 2.5rem;
+      line-height: 1.5;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: var(--btn-bg);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    .btn:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 30px var(--accent-glow); }
+    .btn:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+
+    /* Доступность */
+    @media (prefers-reduced-motion: reduce) {
+      .orb, .glitch::before, .glitch::after { animation: none !important; }
+      .btn { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb--1"></div>
+  <div class="orb orb--2"></div>
+  <div class="orb orb--3"></div>
+
+  <main class="container">
+    <div class="scene">
+      <h1 class="glitch" data-text="404">404</h1>
+      <p class="desc">Страница, которую вы ищете, растворилась в цифровом пространстве.</p>
+      <a href="/" class="btn">Вернуться на главную</a>
+    </div>
+  </main>
+
+  <script>
+    // Лёгкий параллакс при движении мыши (отключается на тач-устройствах)
+    const scene = document.querySelector('.scene');
+    if (window.matchMedia('(hover: hover)').matches) {
+      document.addEventListener('mousemove', (e) => {
+        const x = (window.innerWidth / 2 - e.clientX) / 30;
+        const y = (window.innerHeight / 2 - e.clientY) / 30;
+        scene.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    }
+  </script>
+</body>
+</html>
