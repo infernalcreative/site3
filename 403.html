@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Доступ запрещён</title>
+    <style>
+        /* === Базовые настройки === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* === Эффект скан-линий (как на старых мониторах) === */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.15) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* === Контейнер === */
+        .container {
+            text-align: center;
+            z-index: 2;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        /* === Анимированный замок === */
+        .lock-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lock {
+            width: 50px;
+            height: 40px;
+            background: #ff003c;
+            border-radius: 6px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.6);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .lock::before {
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: 7px;
+            width: 36px;
+            height: 30px;
+            border: 5px solid #ff003c;
+            border-bottom: none;
+            border-radius: 18px 18px 0 0;
+        }
+
+        .lock::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 16px;
+            background: #0a0a0a;
+            border-radius: 3px;
+        }
+
+        /* Радар вокруг замка */
+        .radar {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 1px solid rgba(255, 0, 60, 0.3);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .radar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: 50%;
+            background: linear-gradient(45deg, rgba(255, 0, 60, 0.4) 0%, transparent 60%);
+            transform-origin: 0 0;
+            animation: scan 3s infinite linear;
+            border-radius: 100% 0 0 0;
+        }
+
+        /* === Глитч-эффект для текста 403 === */
+        .glitch {
+            font-size: 6rem;
+            font-weight: 900;
+            color: #fff;
+            position: relative;
+            letter-spacing: 5px;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #00f0ff;
+            clip-path: inset(0 0 0 0);
+            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #ff003c;
+            clip-path: inset(0 0 0 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        h2 {
+            color: #ff003c;
+            letter-spacing: 4px;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
+            text-transform: uppercase;
+        }
+
+        /* === Блок с сообщением терминала === */
+        .message {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #a0a0a0;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-left: 3px solid #ff003c;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 30px;
+        }
+
+        .highlight {
+            color: #ff003c;
+            font-weight: bold;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background: #00f0ff;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        /* === Кнопка === */
+        .btn {
+            display: inline-block;
+            padding: 15px 35px;
+            background: transparent;
+            border: 2px solid #00f0ff;
+            color: #00f0ff;
+            text-decoration: none;
+            font-weight: bold;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            background: #00f0ff;
+            color: #0a0a0a;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* === Футер === */
+        footer {
+            margin-top: 40px;
+            font-size: 0.75rem;
+            color: #444;
+            letter-spacing: 1px;
+        }
+
+        /* === Анимации === */
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 60, 0.4); transform: scale(1); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 60, 0.8); transform: scale(1.05); }
+        }
+
+        @keyframes scan {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(20% 0 80% 0); }
+            20% { clip-path: inset(60% 0 10% 0); }
+            40% { clip-path: inset(40% 0 50% 0); }
+            60% { clip-path: inset(80% 0 5% 0); }
+            80% { clip-path: inset(10% 0 70% 0); }
+            100% { clip-path: inset(30% 0 20% 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 60% 0); }
+            20% { clip-path: inset(80% 0 5% 0); }
+            40% { clip-path: inset(30% 0 20% 0); }
+            60% { clip-path: inset(10% 0 80% 0); }
+            80% { clip-path: inset(50% 0 30% 0); }
+            100% { clip-path: inset(70% 0 10% 0); }
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 480px) {
+            .glitch { font-size: 4rem; }
+            h2 { font-size: 1.1rem; letter-spacing: 2px; }
+            .message { font-size: 0.85rem; padding: 15px; }
+            .btn { padding: 12px 25px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Эффект старого монитора -->
+    <div class="scanlines"></div>
+
+    <div class="container">
+        <div class="lock-container">
+            <div class="radar"></div>
+            <div class="lock"></div>
+        </div>
+
+        <h1 class="glitch" data-text="403">403</h1>
+        <h2>Доступ запрещён</h2>
+
+        <div class="message">
+            > Инициализация протокола безопасности...<br>
+            > Проверка уровня допуска... <span class="highlight">ОТКАЗАНО</span><br>
+            > У вас нет прав для просмотра этой зоны.<br>
+            > Пожалуйста, вернитесь на главную страницу, пока мы не выслали кибер-полицию.<span class="cursor"></span>
+        </div>
+<!--
+        <a href="/" class="btn">Вернуться на базу</a>
+-->
+        <footer>
+            © 2026 Система Безопасности. Все попытки входа логируются.
+        </footer>
+    </div>
+
+</body>
+  </html>
