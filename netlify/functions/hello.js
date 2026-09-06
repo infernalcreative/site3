@@ -3,5 +3,5 @@ export default async (req, context) => {
 }
 
 export const config = {
-  path: '/api/v1/custom',
+  path: '/api/v1/customjs',
 }
