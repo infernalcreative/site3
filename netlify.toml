@@ -1,5 +1,2 @@
 [build]
 functions = "netlify/functions"
-
-[functions.hello]
-path = "/api/v1/hello"
